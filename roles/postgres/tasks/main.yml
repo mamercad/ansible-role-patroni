@@ -1,0 +1,13 @@
+- name: Install postgres-{{ pgversion }}
+  apt:
+    state: present
+    name: postgresql-{{ pgversion }}
+    update_cache: yes
+  become: yes
+
+- name: Disable postgresql (patroni handles it)
+  systemd:
+    name: postgresql
+    state: stopped
+    enabled: no
+  become: yes

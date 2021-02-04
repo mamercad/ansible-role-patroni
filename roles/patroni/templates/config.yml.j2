@@ -1,0 +1,71 @@
+scope: postgres
+namespace: /service/
+name: {{ ansible_hostname }}
+
+restapi:
+  listen: {{ ansible_default_ipv4.address }}:8008
+  connect_address: {{ ansible_default_ipv4.address }}:8008
+
+etcd:
+  host: {{ hostvars[groups['etcd'][0]]['inventory_hostname'] }}:2379
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    postgresql:
+      use_pg_rewind: true
+
+  # initdb:
+  #   - encoding: UTF8
+  #   - data-checksums
+
+  pg_hba:
+    - host replication replicator 127.0.0.1/32 md5
+      host all patroni {{ ansible_default_ipv4.address }}/32 md5
+{% for host in groups['db'] %}
+    - host replication replicator {{ hostvars[host]['inventory_hostname'] }}/32 md5
+{% endfor %}
+    - host all all 0.0.0.0/0 md5
+
+  users:
+    admin:
+      password: admin
+      options:
+        - createrole
+        - createdb
+
+postgresql:
+  listen: {{ ansible_default_ipv4.address }}:5432
+  connect_address: {{ ansible_default_ipv4.address }}:5432
+  data_dir: /var/lib/postgresql/{{ pgversion }}/main
+  bin_dir: /usr/lib/postgresql/{{ pgversion }}/bin
+  config_dir: /etc/postgresql/{{ pgversion }}/main
+  pgpass: /tmp/pgpass
+  authentication:
+    replication:
+      username: replicator
+      password: {{ replicator.password }}
+    superuser:
+      username: patroni
+      password: {{ patroni.password }}
+    rewind: # Has no effect on postgres 10 and lower
+      username: rewind
+      password: {{ rewind.password }}
+  parameters:
+    unix_socket_directories: /var/lib/postgresql/{{ pgversion }}/main
+{% if not patroni_leader %}
+  basebackup:
+    - verbose
+    - max-rate: 100M
+{% endif %}
+
+tags:
+  nofailover: false
+  noloadbalance: false
+  clonefrom: false
+{% if patroni_leader %}
+  nosync: false
+{% endif %}

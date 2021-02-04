@@ -1,0 +1,63 @@
+- name: Install Python3 and friends
+  apt:
+    state: present
+    name:
+      - python3-dev
+      - python3-pip
+    update_cache: yes
+  become: yes
+
+- name: Install virtualenv by pip3
+  pip:
+    state: present
+    name: virtualenv
+    executable: pip3
+  become: yes
+
+- name: Install patroni and friends
+  pip:
+    state: present
+    name:
+      - patroni[etcd3]
+      - psycopg2-binary
+    virtualenv: /opt/patroni
+    virtualenv_python: python3
+  become: yes
+
+- name: Create /etc/patroni directory
+  file:
+    state: directory
+    path: /etc/patroni
+    owner: postgres
+    group: postgres
+    mode: 0750
+  become: yes
+
+- name: Deploy /etc/patroni/config.yml template
+  template:
+    src: config.yml.j2
+    dest: /etc/patroni/config.yml
+    owner: postgres
+    group: postgres
+    mode: 0640
+    backup: yes
+  become: yes
+
+- name: Ensure /var/run/postgresql/{{ pgversion }}-main.pg_stat_tmp directory
+  file:
+    state: directory
+    path: /var/run/postgresql/{{ pgversion }}-main.pg_stat_tmp
+    owner: postgres
+    group: postgres
+    mode: '2750'
+  become: yes
+
+- name: Deploy /etc/postgresql/{{ pgversion }}/pg_hba.conf
+  template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/{{ pgversion }}/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: 0640
+    backup: yes
+  become: yes
