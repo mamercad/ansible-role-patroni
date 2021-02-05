@@ -1,7 +1,7 @@
 [Unit]
 Description=Runners to orchestrate a high-availability PostgreSQL
 After=network.target
-ConditionPathExists=/etc/patroni/config.yml
+ConditionPathExists={{ cfg_dir }}/config.yml
 
 [Service]
 Type=simple
@@ -9,7 +9,7 @@ Type=simple
 User=postgres
 Group=postgres
 
-ExecStart={{ venv_dir }}/bin/patroni /etc/patroni/config.yml
+ExecStart={{ venv_dir }}/bin/patroni {{ cfg_dir }}/config.yml
 
 # only kill the patroni process, not it's children, so it will gracefully stop postgres
 KillMode=process

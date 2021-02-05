@@ -24,10 +24,10 @@
     virtualenv_python: python3
   become: yes
 
-- name: Create /etc/patroni directory
+- name: Create {{ cfg_dir }} directory
   file:
     state: directory
-    path: /etc/patroni
+    path: "{{ cfg_dir }}"
     owner: postgres
     group: postgres
     mode: 0750
@@ -36,7 +36,7 @@
 - name: Deploy /etc/patroni/config.yml template
   template:
     src: config.yml.j2
-    dest: /etc/patroni/config.yml
+    dest: "{{ cfg_dir }}/config.yml"
     owner: postgres
     group: postgres
     mode: 0640

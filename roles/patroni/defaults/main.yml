@@ -1,2 +1,3 @@
 pgversion: 10
 venv_dir: /opt/patroni
+cfg_dir: /etc/patroni
