@@ -44,28 +44,28 @@
   notify: Restart patroni
   become: yes
 
-- name: Ensure /var/lib/postgresql/{{ pgversion }}/main/raft directory
+- name: Ensure /var/lib/postgresql/{{ pg_version }}/main/raft directory
   file:
     state: directory
-    path: /var/lib/postgresql/{{ pgversion }}/main/raft
+    path: /var/lib/postgresql/{{ pg_version }}/main/raft
     owner: postgres
     group: postgres
     mode: 0750
   become: yes
 
-- name: Ensure /var/run/postgresql/{{ pgversion }}-main.pg_stat_tmp directory
+- name: Ensure /var/run/postgresql/{{ pg_version }}-main.pg_stat_tmp directory
   file:
     state: directory
-    path: /var/run/postgresql/{{ pgversion }}-main.pg_stat_tmp
+    path: /var/run/postgresql/{{ pg_version }}-main.pg_stat_tmp
     owner: postgres
     group: postgres
     mode: '2750'
   become: yes
 
-- name: Deploy /etc/postgresql/{{ pgversion }}/pg_hba.conf
+- name: Deploy /etc/postgresql/{{ pg_version }}/pg_hba.conf
   template:
     src: pg_hba.conf.j2
-    dest: /etc/postgresql/{{ pgversion }}/main/pg_hba.conf
+    dest: /etc/postgresql/{{ pg_version }}/main/pg_hba.conf
     owner: postgres
     group: postgres
     mode: 0640

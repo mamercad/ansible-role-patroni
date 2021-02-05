@@ -1,7 +1,7 @@
-- name: Install postgres-{{ pgversion }}
+- name: Install postgres-{{ pg_version }}
   apt:
     state: present
-    name: postgresql-{{ pgversion }}
+    name: postgresql-{{ pg_version }}
     update_cache: yes
   become: yes
 
