@@ -20,7 +20,7 @@
     name:
       - patroni[etcd3]
       - psycopg2-binary
-    virtualenv: "{{ venv_dir }}
+    virtualenv: "{{ venv_dir }}"
     virtualenv_python: python3
   become: yes
 
