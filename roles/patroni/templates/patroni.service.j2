@@ -9,7 +9,7 @@ Type=simple
 User=postgres
 Group=postgres
 
-ExecStart=/opt/patroni/bin/patroni /etc/patroni/config.yml
+ExecStart={{ venv_dir }}/bin/patroni /etc/patroni/config.yml
 
 # only kill the patroni process, not it's children, so it will gracefully stop postgres
 KillMode=process
