@@ -47,7 +47,7 @@
 - name: Ensure {{ pg_root_data_dir }}/{{ pg_version }}/main/raft directory
   file:
     state: directory
-    path: {{ pg_root_data_dir }}/{{ pg_version }}/main/raft
+    path: "{{ pg_root_data_dir }}/{{ pg_version }}/main/raft"
     owner: postgres
     group: postgres
     mode: 0750
