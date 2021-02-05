@@ -13,3 +13,6 @@ host replication replicator {{ hostvars[host]['ansible_eth0']['ipv4']['address']
 {% for host in groups['haproxy'] %}
 host awx awx {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}/32 md5
 {% endfor %}
+{% for host in extra_pg_hba_hosts %}
+host awx awx {{ host }}/32 md5
+{% endfor %}

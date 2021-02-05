@@ -41,6 +41,16 @@
     group: postgres
     mode: 0640
     backup: yes
+  notify: Restart patroni
+  become: yes
+
+- name: Ensure /var/lib/postgresql/{{ pgversion }}/main/raft directory
+  file:
+    state: directory
+    path: /var/lib/postgresql/{{ pgversion }}/main/raft
+    owner: postgres
+    group: postgres
+    mode: 0750
   become: yes
 
 - name: Ensure /var/run/postgresql/{{ pgversion }}-main.pg_stat_tmp directory
@@ -60,4 +70,22 @@
     group: postgres
     mode: 0640
     backup: yes
+  notify: Restart patroni
+  become: yes
+
+- name: Deploy /etc/systemd/system/patroni.service
+  template:
+    src: patroni.service.j2
+    dest: /etc/systemd/system/patroni.service
+    owner: root
+    group: root
+    mode: 0640
+    backup: yes
+  become: yes
+
+- name: Start and enable patroni
+  systemd:
+    name: patroni
+    state: started
+    enabled: yes
   become: yes
