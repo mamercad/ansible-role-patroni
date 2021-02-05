@@ -14,5 +14,5 @@ host replication replicator {{ hostvars[host]['ansible_eth0']['ipv4']['address']
 host awx awx {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}/32 md5
 {% endfor %}
 {% for host in extra_pg_hba_hosts %}
-host awx awx {{ host }}/32 md5
+host {{ host.database }} {{ host.username }} {{ host.ip }}/32 md5
 {% endfor %}
