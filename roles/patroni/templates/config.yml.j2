@@ -10,7 +10,7 @@ restapi:
 #   host: {{ hostvars[groups['etcd'][0]]['inventory_hostname'] }}:2379
 
 raft:
-  data_dir: /var/lib/postgresql/{{ pg_version }}/main/raft
+  data_dir: {{ pg_root_data_dir }}/{{ pg_version }}/main/raft
   self_addr: {{ ansible_default_ipv4.address }}:5010
   partner_addrs:
 {% for host in groups['db'] %}
@@ -54,7 +54,7 @@ bootstrap:
 postgresql:
   listen: {{ ansible_default_ipv4.address }}:5432
   connect_address: {{ ansible_default_ipv4.address }}:5432
-  data_dir: /var/lib/postgresql/{{ pg_version }}/main
+  data_dir: {{ pg_root_data_dir }}/{{ pg_version }}/main
   bin_dir: /usr/lib/postgresql/{{ pg_version }}/bin
   config_dir: /etc/postgresql/{{ pg_version }}/main
   pgpass: /tmp/pgpass
@@ -69,7 +69,7 @@ postgresql:
       username: rewind
       password: {{ rewind.password }}
   parameters:
-    unix_socket_directories: /var/lib/postgresql/{{ pg_version }}/main
+    unix_socket_directories: {{ pg_root_data_dir }}/{{ pg_version }}/main
 {% if not patroni_leader %}
   basebackup:
     - verbose

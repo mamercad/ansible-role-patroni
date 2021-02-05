@@ -44,19 +44,19 @@
   notify: Restart patroni
   become: yes
 
-- name: Ensure /var/lib/postgresql/{{ pg_version }}/main/raft directory
+- name: Ensure {{ pg_root_data_dir }}/{{ pg_version }}/main/raft directory
   file:
     state: directory
-    path: /var/lib/postgresql/{{ pg_version }}/main/raft
+    path: {{ pg_root_data_dir }}/{{ pg_version }}/main/raft
     owner: postgres
     group: postgres
     mode: 0750
   become: yes
 
-- name: Ensure /var/run/postgresql/{{ pg_version }}-main.pg_stat_tmp directory
+- name: Ensure {{ pg_runtime_dir }}/{{ pg_version }}-main.pg_stat_tmp directory
   file:
     state: directory
-    path: /var/run/postgresql/{{ pg_version }}-main.pg_stat_tmp
+    path: "{{ pg_runtime_dir }}/{{ pg_version }}-main.pg_stat_tmp"
     owner: postgres
     group: postgres
     mode: '2750'
