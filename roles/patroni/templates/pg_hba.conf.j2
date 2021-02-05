@@ -10,9 +10,6 @@ host    replication     all             ::1/128                 md5
 host all patroni {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}/32 md5
 host replication replicator {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}/32 md5
 {% endfor %}
-{% for host in groups['haproxy'] %}
-host awx awx {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}/32 md5
-{% endfor %}
 {% for host in extra_pg_hba_hosts %}
 host {{ host.database }} {{ host.username }} {{ host.ip }}/32 md5
 {% endfor %}
