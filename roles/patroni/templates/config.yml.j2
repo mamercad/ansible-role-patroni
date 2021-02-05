@@ -6,9 +6,6 @@ restapi:
   listen: {{ ansible_default_ipv4.address }}:8008
   connect_address: {{ ansible_default_ipv4.address }}:8008
 
-# etcd:
-#   host: {{ hostvars[groups['etcd'][0]]['inventory_hostname'] }}:2379
-
 raft:
   data_dir: {{ pg_root_data_dir }}/{{ pg_version }}/main/raft
   self_addr: {{ ansible_default_ipv4.address }}:5010
