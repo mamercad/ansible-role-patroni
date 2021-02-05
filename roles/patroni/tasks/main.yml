@@ -53,10 +53,10 @@
     mode: 0750
   become: yes
 
-- name: Ensure {{ pg_runtime_dir }}/{{ pg_version }}-main.pg_stat_tmp directory
+- name: Ensure {{ pg_run_time_dir }}/{{ pg_version }}-main.pg_stat_tmp directory
   file:
     state: directory
-    path: "{{ pg_runtime_dir }}/{{ pg_version }}-main.pg_stat_tmp"
+    path: "{{ pg_run_time_dir }}/{{ pg_version }}-main.pg_stat_tmp"
     owner: postgres
     group: postgres
     mode: '2750'
