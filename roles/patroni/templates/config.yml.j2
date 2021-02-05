@@ -56,7 +56,7 @@ postgresql:
   connect_address: {{ ansible_default_ipv4.address }}:5432
   data_dir: {{ pg_root_data_dir }}/{{ pg_version }}/main
   bin_dir: /usr/lib/postgresql/{{ pg_version }}/bin
-  config_dir: /etc/postgresql/{{ pg_version }}/main
+  config_dir: {{ pg_root_etc_dir }}/{{ pg_version }}/main
   pgpass: /tmp/pgpass
   authentication:
     replication:

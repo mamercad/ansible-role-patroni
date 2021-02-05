@@ -62,10 +62,10 @@
     mode: '2750'
   become: yes
 
-- name: Deploy /etc/postgresql/{{ pg_version }}/pg_hba.conf
+- name: Deploy {{ pg_root_etc_dir }}/{{ pg_version }}/pg_hba.conf
   template:
     src: pg_hba.conf.j2
-    dest: /etc/postgresql/{{ pg_version }}/main/pg_hba.conf
+    dest: "{{ pg_root_etc_dir }}/{{ pg_version }}/main/pg_hba.conf"
     owner: postgres
     group: postgres
     mode: 0640
