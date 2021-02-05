@@ -10,7 +10,7 @@ restapi:
 #   host: {{ hostvars[groups['etcd'][0]]['inventory_hostname'] }}:2379
 
 raft:
-  data_dir: /var/lib/postgres/{{ pgversion }}/main/raft
+  data_dir: /var/lib/postgresql/{{ pgversion }}/main/raft
   self_addr: {{ ansible_default_ipv4.address }}:5010
   partner_addrs:
 {% for host in groups['db'] %}
