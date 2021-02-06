@@ -1,0 +1,8 @@
+postgres:
+  version: 10
+  user: postgres
+  group: postgres
+  data_dir: /var/lib/postgresql/10/main
+  bin_dir: /usr/lib/postgresql/10/bin
+  config_dir: /etc/postgresql/10/main
+  run_dir: /var/run/postgresql

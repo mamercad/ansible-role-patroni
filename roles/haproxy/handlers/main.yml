@@ -1,5 +1,0 @@
-- name: Restart haproxy
-  systemd:
-    state: restarted
-    name: haproxy
-  become: yes

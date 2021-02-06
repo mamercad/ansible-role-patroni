@@ -1,14 +1,5 @@
 ---
 
-- name: Ping
-  hosts: all
-  gather_facts: yes
-  become: no
-
-  tasks:
-
-    - action: ping
-
 - name: Database
   hosts: db
   gather_facts: yes
@@ -16,32 +7,6 @@
 
   tasks:
 
-    - name: Include postgres role
-      include_role:
-        name: postgres
-
     - name: Include patroni role
       include_role:
         name: patroni
-
-- name: KV
-  hosts: etcd
-  gather_facts: yes
-  become: no
-
-  tasks:
-
-    - name: Include etcd role
-      include_role:
-        name: etcd
-
-- name: Proxy
-  hosts: haproxy
-  gather_facts: yes
-  become: no
-
-  tasks:
-
-    - name: Include haproxy role
-      include_role:
-        name: haproxy

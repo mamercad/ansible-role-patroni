@@ -1,91 +1,22 @@
-- name: Install Python3 and friends
-  apt:
-    state: present
-    name:
-      - python3-dev
-      - python3-pip
-    update_cache: yes
-  become: yes
+- name: Assert debian bionic
+  assert:
+    that:
+      - ansible_os_family == "Debian"
+      - ansible_distribution_release == "bionic"
 
-- name: Install virtualenv by pip3
-  pip:
-    state: present
-    name: virtualenv
-    executable: pip3
-  become: yes
+- name: Include common variables
+  include_vars:
+    file: main.yml
 
-- name: Install patroni and friends
-  pip:
-    state: present
-    name:
-      - patroni[etcd3]
-      - psycopg2-binary
-    virtualenv: "{{ venv_dir }}"
-    virtualenv_python: python3
-  become: yes
+- name: Include family/distribution variables
+  include_vars:
+    file: "{{ ansible_os_family }}/{{ ansible_distribution_release }}/main.yml"
 
-- name: Create {{ cfg_dir }} directory
-  file:
-    state: directory
-    path: "{{ cfg_dir }}"
-    owner: postgres
-    group: postgres
-    mode: 0750
-  become: yes
+- name: Install postgres and patroni
+  include_tasks: install.yml
 
-- name: Deploy /etc/patroni/config.yml template
-  template:
-    src: config.yml.j2
-    dest: "{{ cfg_dir }}/config.yml"
-    owner: postgres
-    group: postgres
-    mode: 0640
-    backup: yes
-  notify: Restart patroni
-  become: yes
+- name: Configure postgres and patroni
+  include_tasks: configure.yml
 
-- name: Ensure {{ pg_root_data_dir }}/{{ pg_version }}/main/raft directory
-  file:
-    state: directory
-    path: "{{ pg_root_data_dir }}/{{ pg_version }}/main/raft"
-    owner: postgres
-    group: postgres
-    mode: 0750
-  become: yes
-
-- name: Ensure {{ pg_run_time_dir }}/{{ pg_version }}-main.pg_stat_tmp directory
-  file:
-    state: directory
-    path: "{{ pg_run_time_dir }}/{{ pg_version }}-main.pg_stat_tmp"
-    owner: postgres
-    group: postgres
-    mode: '2750'
-  become: yes
-
-- name: Deploy {{ pg_root_etc_dir }}/{{ pg_version }}/pg_hba.conf
-  template:
-    src: pg_hba.conf.j2
-    dest: "{{ pg_root_etc_dir }}/{{ pg_version }}/main/pg_hba.conf"
-    owner: postgres
-    group: postgres
-    mode: 0640
-    backup: yes
-  notify: Restart patroni
-  become: yes
-
-- name: Deploy /etc/systemd/system/patroni.service
-  template:
-    src: patroni.service.j2
-    dest: /etc/systemd/system/patroni.service
-    owner: root
-    group: root
-    mode: 0640
-    backup: yes
-  become: yes
-
-- name: Start and enable patroni
-  systemd:
-    name: patroni
-    state: started
-    enabled: yes
-  become: yes
+# - name: Start patroni
+#   include_tasks: start.yml

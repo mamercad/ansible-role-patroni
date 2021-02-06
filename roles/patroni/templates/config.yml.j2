@@ -1,5 +1,5 @@
-scope: postgres
-namespace: /service/
+scope: {{ patroni.config.scope }}
+namespace: {{ patroni.config.namespace }}
 name: {{ ansible_hostname }}
 
 restapi:
@@ -7,14 +7,18 @@ restapi:
   connect_address: {{ ansible_default_ipv4.address }}:8008
 
 raft:
-  data_dir: {{ pg_root_data_dir }}/{{ pg_version }}/main/raft
+  data_dir: {{ patroni.raft_dir }}
   self_addr: {{ ansible_default_ipv4.address }}:5010
+{% if groups['db']|length == 1 %}
+  partner_addrs: []
+{% else %}
   partner_addrs:
 {% for host in groups['db'] %}
 {% if hostvars[host]['ansible_eth0']['ipv4']['address'] != ansible_default_ipv4.address %}
     - '{{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:5010'
 {% endif %}
 {% endfor %}
+{% endif %}
 
 bootstrap:
   dcs:
@@ -24,49 +28,44 @@ bootstrap:
     maximum_lag_on_failover: 1048576
     postgresql:
       use_pg_rewind: true
-
-  # initdb:
-  #   - encoding: UTF8
-  #   - data-checksums
-
-  pg_hba:
-    - host replication replicator 127.0.0.1/32 md5
-      host all patroni {{ ansible_default_ipv4.address }}/32 md5
-{% for host in groups['db'] %}
-    - host all patroni {{ hostvars[host]['inventory_hostname'] }}/32 md5
-    - host replication replicator {{ hostvars[host]['inventory_hostname'] }}/32 md5
-{% endfor %}
-{% for host in extra_pg_hba_hosts %}
-    - host {{ host.database }} {{ host.username }} {{ host.ip }}/32 md5
-{% endfor %}
-    - host all all 0.0.0.0/0 md5
-
   users:
     admin:
       password: admin
       options:
         - createrole
         - createdb
+  pg_hba:
+    - local   all             postgres                                peer
+    - local   all             all                                     peer
+    - host    all             all             127.0.0.1/32            md5
+    - host    all             all             ::1/128                 md5
+    - local   replication     all                                     peer
+    - host    replication     all             127.0.0.1/32            md5
+    - host    replication     all             ::1/128                 md5
+{% for host in groups['db'] %}
+    - host all patroni {{ hostvars[host]['inventory_hostname'] }}/32 md5
+    - host replication replicator {{ hostvars[host]['inventory_hostname'] }}/32 md5
+{% endfor %}
 
 postgresql:
   listen: {{ ansible_default_ipv4.address }}:5432
   connect_address: {{ ansible_default_ipv4.address }}:5432
-  data_dir: {{ pg_root_data_dir }}/{{ pg_version }}/main
-  bin_dir: /usr/lib/postgresql/{{ pg_version }}/bin
-  config_dir: {{ pg_root_etc_dir }}/{{ pg_version }}/main
-  pgpass: /tmp/pgpass
+  data_dir: {{ postgres.data_dir }}
+  bin_dir: {{ postgres.bin_dir }}
+  config_dir: {{ postgres.config_dir }}
+  pgpass: {{ patroni.config.postgresql.pgpass }}
   authentication:
     replication:
       username: replicator
-      password: {{ replicator.password }}
+      password: {{ password.replicator }}
     superuser:
       username: patroni
-      password: {{ patroni.password }}
+      password: {{ password.patroni }}
     rewind: # Has no effect on postgres 10 and lower
       username: rewind
-      password: {{ rewind.password }}
+      password: {{ password.rewind }}
   parameters:
-    unix_socket_directories: {{ pg_root_data_dir }}/{{ pg_version }}/main
+    unix_socket_directories: {{ postgres.run_dir }}
 {% if not patroni_leader %}
   basebackup:
     - verbose

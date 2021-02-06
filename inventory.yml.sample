@@ -1,28 +1,13 @@
 db:
   hosts:
     db1:
-      ansible_user: root
       patroni_leader: yes
     db2:
-      ansible_user: root
-      patroni_leader: no
-    db3
-      ansible_user: root
       patroni_leader: no
   vars:
-    replicator:
-      password: hunter2
-    patroni:
-      password: hunter2
-    rewind:
-      password: hunter2
-
-etcd:
-  hosts:
-    etcd1:
-      ansible_user: root
-
-haproxy:
-  hosts:
-    haproxy1:
-      ansible_user: root
+    ansible_user: root
+    ansible_python_interpreter: /usr/bin/python3
+    password:
+      replicator: hunter2
+      patroni: hunter2
+      rewind: hunter2

@@ -1,0 +1,17 @@
+python:
+  basename: python3
+  binary: /usr/bin/python3
+  pip:
+    basename: pip3
+
+patroni:
+  venv_dir: /opt/patroni
+  cfg_dir: /etc/patroni
+  raft_dir: /opt/patroni/raft
+  user: postgres
+  group: postgres
+  config:
+    scope: postgres
+    namespace: /service/
+    postgresql:
+      pgpass: /var/lib/postgresql/pgpass

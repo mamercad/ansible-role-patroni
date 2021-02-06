@@ -1,5 +1,0 @@
-- name: Restart etcd
-  systemd:
-    state: restarted
-    name: etcd
-  become: yes

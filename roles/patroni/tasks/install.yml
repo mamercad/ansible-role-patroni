@@ -1,0 +1,35 @@
+- name: Install postgresql-{{ postgres.version }}
+  apt:
+    state: present
+    name:
+      - postgresql-{{ postgres.version }}
+      - postgresql-server-dev-{{ postgres.version }}
+    update_cache: yes
+  become: yes
+
+- name: Install Python and friends
+  apt:
+    state: present
+    name:
+      - "{{ python.basename }}-dev"
+      - "{{ python.basename }}-pip"
+      - "{{ python.basename }}-psycopg2"
+    update_cache: yes
+  become: yes
+
+- name: Install virtualenv by pip
+  pip:
+    state: present
+    name: virtualenv
+    executable: "{{ python.pip.basename }}"
+  become: yes
+
+- name: Install patroni and friends
+  pip:
+    state: present
+    name:
+      - psycopg2-binary
+      - patroni[raft]
+    virtualenv: "{{ patroni.venv_dir }}"
+    virtualenv_python: "{{ python.binary }}"
+  become: yes
