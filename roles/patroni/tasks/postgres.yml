@@ -6,11 +6,6 @@
   become_user: postgres
   when: patroni_leader
 
-# - debug:
-#     var: check_cluster_exists
-
-# - meta: end_play
-
 - name: Create cluster {{ postgres.version }} {{ postgres.cluster }} if necessary
   shell: pg_createcluster {{ postgres.version }} {{ postgres.cluster }}
   become: yes
