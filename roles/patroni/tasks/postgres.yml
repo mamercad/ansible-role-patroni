@@ -4,7 +4,7 @@
   register: check_cluster_exists
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when: patroni_leader | default(False)
 
 - name: Give {{ postgres.user }} ownership of {{ postgres.config_base_dir }}
   file:
@@ -20,7 +20,7 @@
   become_user: postgres
   when:
     - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Ensure stats_temp_directory exists
   file:
@@ -47,7 +47,7 @@
   ignore_errors: yes  # Might already be running
   when:
     - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Create patroni superuser
   community.general.postgresql_user:
@@ -61,7 +61,7 @@
   become_user: postgres
   when:
     - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Create replication user
   community.general.postgresql_user:
@@ -75,7 +75,7 @@
   become_user: postgres
   when:
     - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Add patroni to pg_hba.conf (this hosts)
   community.general.postgresql_pg_hba:
@@ -92,8 +92,7 @@
   become: yes
   become_user: postgres
   when:
-    - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Add patroni to pg_hba.conf (group hosts)
   community.general.postgresql_pg_hba:
@@ -109,8 +108,7 @@
   become: yes
   become_user: postgres
   when:
-    - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Add replicator to pg_hba.conf (this host)
   community.general.postgresql_pg_hba:
@@ -127,8 +125,7 @@
   become: yes
   become_user: postgres
   when:
-    - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 - name: Add replicator to pg_hba.conf (group hosts)
   community.general.postgresql_pg_hba:
@@ -144,8 +141,7 @@
   become: yes
   become_user: postgres
   when:
-    - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 # - name: Create {{ postgres.config_dir }}/conf.d directory
 #   file:
@@ -181,7 +177,7 @@
   ignore_errors: yes  # Might already not be running
   when:
     - check_cluster_exists is failed
-    - patroni_leader
+    - patroni_leader | default(False)
 
 # - name: Ensure {{ pg_run_time_dir }}/{{ pg_version }}-main.pg_stat_tmp directory
 #   file:
