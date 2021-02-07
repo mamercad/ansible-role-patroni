@@ -45,7 +45,9 @@
   become: yes
   become_user: postgres
   ignore_errors: yes  # Might already be running
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 - name: Create patroni superuser
   community.general.postgresql_user:
@@ -57,7 +59,9 @@
     expires: infinity
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 - name: Create replication user
   community.general.postgresql_user:
@@ -69,7 +73,9 @@
     expires: infinity
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 - name: Add patroni to pg_hba.conf (this hosts)
   community.general.postgresql_pg_hba:
@@ -85,7 +91,9 @@
     - "{{ ansible_default_ipv4.address }}/32"
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 - name: Add patroni to pg_hba.conf (group hosts)
   community.general.postgresql_pg_hba:
@@ -100,7 +108,9 @@
     - "{{ groups['db'] }}"
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 - name: Add replicator to pg_hba.conf (this host)
   community.general.postgresql_pg_hba:
@@ -116,7 +126,9 @@
     - "{{ ansible_default_ipv4.address }}/32"
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 - name: Add replicator to pg_hba.conf (group hosts)
   community.general.postgresql_pg_hba:
@@ -131,7 +143,9 @@
     - "{{ groups['db'] }}"
   become: yes
   become_user: postgres
-  when: patroni_leader
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 # - name: Create {{ postgres.config_dir }}/conf.d directory
 #   file:
@@ -165,6 +179,9 @@
   become: yes
   become_user: postgres
   ignore_errors: yes  # Might already not be running
+  when:
+    - check_cluster_exists is failed
+    - patroni_leader
 
 # - name: Ensure {{ pg_run_time_dir }}/{{ pg_version }}-main.pg_stat_tmp directory
 #   file:
