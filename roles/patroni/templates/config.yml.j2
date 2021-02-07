@@ -66,7 +66,7 @@ postgresql:
       password: {{ password.rewind }}
   parameters:
     unix_socket_directories: {{ postgres.run_dir }}
-{% if not patroni_leader %}
+{% if not patroni_leader|default(False) %}
   basebackup:
     - verbose
     - max-rate: 100M
@@ -76,6 +76,6 @@ tags:
   nofailover: false
   noloadbalance: false
   clonefrom: false
-{% if patroni_leader %}
+{% if patroni_leader|default(False) %}
   nosync: false
 {% endif %}
