@@ -13,32 +13,6 @@
     create: yes
   become: yes
 
-- name: Give {{ postgres.user }} ownership of {{ postgres.config_base_dir }}
-  file:
-    path: "{{ postgres.config_base_dir }}"
-    owner: "{{ postgres.user }}"
-    group: "{{ postgres.group }}"
-    mode: 0750
-  become: yes
-
-- name: Ensure stats_temp_directory exists
-  file:
-    state: directory
-    path: /var/run/postgresql/{{ postgres.version }}-{{ postgres.cluster }}.pg_stat_tmp
-    owner: "{{ postgres.user }}"
-    group: "{{ postgres.group }}"
-    mode: "2750"
-  become: yes
-
-- name: Ensure {{ postgres.config_dir }}/conf.d exists
-  file:
-    state: directory
-    path: "{{ postgres.config_dir }}/conf.d"
-    owner: "{{ postgres.user }}"
-    group: "{{ postgres.group }}"
-    mode: 0750
-  become: yes
-
 - name: Install postgresql-{{ postgres.version }}
   apt:
     state: present
