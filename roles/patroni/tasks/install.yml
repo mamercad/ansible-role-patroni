@@ -48,3 +48,15 @@
     virtualenv: "{{ patroni.venv_dir }}"
     virtualenv_python: "{{ python.binary }}"
   become: yes
+
+- name: Add the software watchdog module
+  modprobe:
+    state: present
+    name: softdog
+  become: yes
+
+- name: Give postgres ownership of the watchdog
+  file:
+    path: /dev/watchdog
+    owner: "{{ postgres.user }}"
+  become: yes
