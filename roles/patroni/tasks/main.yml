@@ -18,5 +18,8 @@
 - name: Configure postgres and patroni
   include_tasks: configure.yml
 
+- name: Bootstrap postgres
+  include_tasks: postgres.yml
+
 # - name: Start patroni
 #   include_tasks: start.yml
