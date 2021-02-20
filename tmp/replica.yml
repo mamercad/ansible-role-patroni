@@ -1,0 +1,70 @@
+(patroni) postgres@db2:~$ cat /etc/patroni/config.yml
+scope: postgres
+#namespace: /service/
+name: db2
+
+restapi:
+  listen: 134.209.66.136:8008
+  connect_address: 134.209.66.136:8008
+
+raft:
+  data_dir: /opt/patroni/raft
+  self_addr: 134.209.66.136:5010
+  partner_addrs:
+    - '134.209.76.51:5010'
+    - '167.172.146.35:5010'
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+  postgresql:
+    use_pg_rewind: true
+    use_slots: true
+    parameters:
+      wal_level: hot_standby
+      hot_standby: "on"
+      wal_keep_segments: 8
+      max_wal_senders: 10
+      max_replication_slots: 10
+      wal_log_hints: "on"
+      archive_mode: "on"
+#        archive_timeout: 1800s
+#        archive_command: mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f
+#      recovery_conf:
+#        restore_command: cp ../wal_archive/%f %p
+
+postgresql:
+  listen: 134.209.66.136:5432
+  connect_address: 134.209.66.136:5432
+  data_dir: /var/lib/postgresql/10/main
+  bin_dir: /usr/lib/postgresql/10/bin
+  config_dir: /etc/postgresql/10/main
+  pgpass: /var/lib/postgresql/pgpass
+  authentication:
+    replication:
+      username: postgres
+      password: hunter2
+    superuser:
+      username: postgres
+      password: hunter2
+    rewind:  # Has no effect on postgres 10 and lower
+      username: rewind_user
+      password: rewind_password
+  parameters:
+    unix_socket_directories: /var/run/postgresql
+    #  basebackup:
+    #- verbose
+    #- max-rate: 100M
+#watchdog:
+#  mode: automatic # Allowed values: off, automatic, required
+#  device: /dev/watchdog
+#  safety_margin: 5
+
+    #tags:
+    #    nofailover: false
+    #noloadbalance: false
+    #clonefrom: false
+    #nosync: false
