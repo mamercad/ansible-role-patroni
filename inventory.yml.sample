@@ -1,9 +1,8 @@
 db:
   hosts:
     db1:
-      patroni_leader: yes
     db2:
-      patroni_leader: no
+    db3:
   vars:
     ansible_user: root
     ansible_python_interpreter: /usr/bin/python3
